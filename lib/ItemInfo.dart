@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'UserInfo.dart';
 
 class MainWindow extends StatefulWidget {
   const MainWindow({super.key});
@@ -10,11 +9,13 @@ class MainWindow extends StatefulWidget {
 
 class _MainWindowState extends State<MainWindow> {
 
+  
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: UserInfo(),
+        child: Text(""),
       ),
     );
   }
