@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'GlobalVariables.dart';
 import 'MainWindow.dart';
 
 class LoginPage extends StatefulWidget {
@@ -36,7 +36,8 @@ class _LoginPageState extends State<LoginPage> {
               IconButton.filled(
                 onPressed: () {
                   // Add authorisation!!!
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MaterialApp(home: MainWindow(),)));
+                  login = _loginText.text;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MainWindow(),));
                 }, 
                 icon: const Icon(Icons.login)
               )
