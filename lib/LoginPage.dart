@@ -103,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       for (int i = 0; i < login.length; i += 1) {
                         if ( login[i] == _loginText.text && pass[i] == _passwordText.text ) {
+                          g_login = login[i];
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const MainWindow()));
                         }
                       }

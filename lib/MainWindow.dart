@@ -3,6 +3,7 @@ import 'GlobalVariables.dart';
 import 'UserInfo.dart';
 import 'ItemInfo.dart';
 import 'Price.dart';
+import 'About.dart';
 import 'PersReq.dart';
 
 class MainWindow extends StatefulWidget {
@@ -25,7 +26,7 @@ class _MainWindowState extends State<MainWindow> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(login),
+        title: Text(g_login),
         centerTitle: false,
       ),
       body: Stack(
@@ -34,9 +35,10 @@ class _MainWindowState extends State<MainWindow> with TickerProviderStateMixin {
             controller: _tabController,
             children: const [
               UserInfo(),
-              ItemInfo(),
+              // ItemInfo(),
               Price(),
               Text("data"),
+              About()
             ]
           ),
           Container(
@@ -44,6 +46,7 @@ class _MainWindowState extends State<MainWindow> with TickerProviderStateMixin {
             child: TabBar(
               // padding: EdgeInsets.all(20),
               indicatorWeight: 10,
+              indicatorColor: Colors.lightBlue,
               controller: _tabController,
               tabs: [
                 Icon(
@@ -55,12 +58,6 @@ class _MainWindowState extends State<MainWindow> with TickerProviderStateMixin {
                 Icon(
                   size: 40,
                   shadows: [shadow],
-                  Icons.assignment,
-                  color: Colors.lightBlue,
-                ),
-                Icon(
-                  shadows: [shadow],
-                  size: 40,
                   Icons.monetization_on,
                   color: Colors.lightBlue,
                 ),
@@ -68,6 +65,12 @@ class _MainWindowState extends State<MainWindow> with TickerProviderStateMixin {
                   shadows: [shadow],
                   size: 40,
                   Icons.trending_up,
+                  color: Colors.lightBlue,
+                ),
+                Icon(
+                  shadows: [shadow],
+                  size: 40,
+                  Icons.person,
                   color: Colors.lightBlue,
                 ),
               ]

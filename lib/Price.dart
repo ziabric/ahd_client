@@ -61,6 +61,7 @@ class _PriceState extends State<Price> {
                   return const Center(child: CircularProgressIndicator());
                 } else {
                   var userAnswer = usersSnapshot.data!;
+                  
                   return Container(
                     padding: const EdgeInsets.all(10),
                     alignment: Alignment.center,
@@ -68,6 +69,12 @@ class _PriceState extends State<Price> {
                       separatorBuilder: (context, index) {return const SizedBox(height: 10,);},
                       itemCount: userAnswer.length,
                       itemBuilder: (context, index) {
+
+                        final TextEditingController _price = TextEditingController(text: userAnswer[index][2]);
+                        final TextEditingController _from = TextEditingController(text: userAnswer[index][3]);
+                        final TextEditingController _to = TextEditingController(text: userAnswer[index][4]);
+                        final TextEditingController _type = TextEditingController(text: userAnswer[index][9]);
+
                         return Container(
                           decoration: BoxDecoration(
                             color: Colors.lightBlue,
@@ -85,22 +92,47 @@ class _PriceState extends State<Price> {
                                     child:  Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        "${userAnswer[index][6]}",
-                                        style: TextStyle(
+                                      Text(userAnswer[index][6],
+                                        style: const TextStyle(
                                           fontSize: 30
                                         ),
                                       ),
                                       const Divider(),
-                                      Text("Price ${userAnswer[index][2]}"),
+                                      TextField(
+                                        decoration: const InputDecoration(labelText: 'Price'),
+                                        controller: _price,
+                                      ),
+                                      TextField(
+                                        decoration: const InputDecoration(labelText: 'From'),
+                                        controller: _from,
+                                      ),
+                                      TextField(
+                                        decoration: const InputDecoration(labelText: 'To'),
+                                        controller: _to,
+                                      ),
+                                      const SizedBox(height: 7,),
+                                      Text(
+                                        "Type: ${userAnswer[index][9]}",
+                                        style: const TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      ),
                                       const Divider(),
-                                      Text("From: ${userAnswer[index][3]}"),
-                                      const Divider(),
-                                      Text("To: ${userAnswer[index][4]}"),
-                                      const Divider(),
-                                      Text("Type: ${userAnswer[index][9]}"),
-                                      const Divider(),
-                                      IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app))
+                                      Container(
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app)),
+                                            IconButton(
+                                              onPressed: () {
+                                                
+                                              }, 
+                                              icon: const Icon(Icons.save)
+                                            )
+                                          ],
+                                        ),
+                                      )
                                     ],
                                   )), 
                                 ));
