@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   postgres: ^3.0.0
+  mongo_dart: ^0.10.1
   flutter:
     sdk: flutter
 

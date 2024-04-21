@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'GlobalVariables.dart';
 
-class ItemInfo extends StatefulWidget {
-  const ItemInfo({super.key});
+class Price extends StatefulWidget {
+  const Price({super.key});
   @override
-  State<ItemInfo> createState() => _ItemInfoState();
+  State<Price> createState() => _PriceState();
 }
 
-class _ItemInfoState extends State<ItemInfo> {
+class _PriceState extends State<Price> {
 
-  Future<List<List<String>>> _getItems (Connection handler) async {
+  Future<List<List<String>>> _getUsers (Connection handler) async {
     List<List<String>> output = [];
-    final result = await handler.execute("select * from material;");
+    final result = await handler.execute("select * from prices left join (select * from material) as mat on mat.item_id_=prices.item_id_;");
 
     for (var row in result) {
       List<String> newRow = [];
@@ -53,28 +53,30 @@ class _ItemInfoState extends State<ItemInfo> {
             return Center(child: Text('Ошибка: ${handler.error}'));
           } else {
             return FutureBuilder(
-              future: _getItems(handler.data!), 
+              future: _getUsers(handler.data!), 
               builder: (context, usersSnapshot) {
                 if (usersSnapshot.hasError) {
                   return const Text("Error users");
                 } else if (usersSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
+                  var userAnswer = usersSnapshot.data!;
                   return Container(
                     padding: const EdgeInsets.all(10),
                     alignment: Alignment.center,
                     child: ListView.separated(
                       separatorBuilder: (context, index) {return const SizedBox(height: 10,);},
-                      itemCount: usersSnapshot.data!.length,
+                      itemCount: userAnswer.length,
                       itemBuilder: (context, index) {
                         return Container(
                           decoration: BoxDecoration(
                             color: Colors.lightBlue,
                             borderRadius: BorderRadius.circular(15),
-                            boxShadow:  [boxShadow]
+                            boxShadow: [boxShadow]
                           ),
                           padding: const EdgeInsets.all(15),
-                          child: Row(children: [
+                          child: Row(
+                            children: [
                             IconButton(
                               onPressed: () {
                                 showDialog(context: context, builder: (context) => Dialog(
@@ -83,15 +85,20 @@ class _ItemInfoState extends State<ItemInfo> {
                                     child:  Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text("Name: ${usersSnapshot.data![index][1]}"),
+                                      Text(
+                                        "${userAnswer[index][6]}",
+                                        style: TextStyle(
+                                          fontSize: 30
+                                        ),
+                                      ),
                                       const Divider(),
-                                      Text("Category: ${usersSnapshot.data![index][2]}"),
+                                      Text("Price ${userAnswer[index][2]}"),
                                       const Divider(),
-                                      Text("id: ${usersSnapshot.data![index][0]}"),
+                                      Text("From: ${userAnswer[index][3]}"),
                                       const Divider(),
-                                      Text("Req dt: ${usersSnapshot.data![index][3]}"),
+                                      Text("To: ${userAnswer[index][4]}"),
                                       const Divider(),
-                                      Text("Type: ${usersSnapshot.data![index][4]}"),
+                                      Text("Type: ${userAnswer[index][9]}"),
                                       const Divider(),
                                       IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app))
                                     ],
@@ -99,18 +106,19 @@ class _ItemInfoState extends State<ItemInfo> {
                                 ));
                               }, 
                               icon: const Icon(
-                                Icons.widgets,
+                                Icons.contact_page,
                                 size: 40,
                               )
                             ),
                             const SizedBox(width: 20,),
                             Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    usersSnapshot.data![index][1],
+                                    userAnswer[index][6],
                                     maxLines: 1,
                                     style: const TextStyle(
                                       fontSize: 23,
@@ -120,7 +128,7 @@ class _ItemInfoState extends State<ItemInfo> {
                                 Container(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    usersSnapshot.data![index][4],
+                                    userAnswer[index][2],
                                     maxLines: 2,
                                     style: const TextStyle(
                                       fontSize: 13,

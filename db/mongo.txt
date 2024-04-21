@@ -1,0 +1,18 @@
+default server
+
+collection = first_collection
+
+{
+  "_id": {
+    "$oid": "662444098dc59dffdc232e49"
+  },
+  "name": "user",
+  "pass": "user"
+}
+{
+  "_id": {
+    "$oid": "662444d58dc59dffdc232e4a"
+  },
+  "name": "user1",
+  "pass": "user"
+}

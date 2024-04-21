@@ -35,16 +35,14 @@ class _UserInfoState extends State<UserInfo> {
       output.add(newRow);
     }
 
+    await handler.close();
+
     return output;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(login),
-        centerTitle: false,
-      ),
       body: FutureBuilder<dynamic>(
         future: Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: 'postgres', password: 'user',)), 
         builder: (context, handler) {
@@ -62,29 +60,19 @@ class _UserInfoState extends State<UserInfo> {
                 } else if (usersSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
+                  var userAnswer = usersSnapshot.data!;
                   return Container(
                     padding: const EdgeInsets.all(10),
                     alignment: Alignment.center,
                     child: ListView.separated(
                       separatorBuilder: (context, index) {return const SizedBox(height: 10,);},
-                      itemCount: usersSnapshot.data!.length,
+                      itemCount: userAnswer.length,
                       itemBuilder: (context, index) {
                         return Container(
                           decoration: BoxDecoration(
-                            // border: Border.all(width: 5),
                             color: Colors.lightBlue,
                             borderRadius: BorderRadius.circular(15),
-                            boxShadow: const [
-                              BoxShadow(
-                                // color: Colors.black,
-                                offset: Offset(
-                                  2.0,
-                                  10.0,
-                                ),
-                                blurRadius: 40.0,
-                                spreadRadius: 1.0,
-                              ),
-                            ]
+                            boxShadow: [boxShadow]
                           ),
                           padding: const EdgeInsets.all(15),
                           child: Row(children: [
@@ -96,17 +84,17 @@ class _UserInfoState extends State<UserInfo> {
                                     child:  Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text("Name: ${usersSnapshot.data![index][1]}"),
+                                      Text("Name: ${userAnswer[index][1]}"),
                                       const Divider(),
-                                      Text("Age: ${usersSnapshot.data![index][2]}"),
+                                      Text("Age: ${userAnswer[index][2]}"),
                                       const Divider(),
-                                      Text("id: ${usersSnapshot.data![index][0]}"),
+                                      Text("id: ${userAnswer[index][0]}"),
                                       const Divider(),
-                                      Text("Birthday: ${usersSnapshot.data![index][3]}"),
+                                      Text("Birthday: ${userAnswer[index][3]}"),
                                       const Divider(),
-                                      Text("CN: ${usersSnapshot.data![index][4]}"),
+                                      Text("CN: ${userAnswer[index][4]}"),
                                       const Divider(),
-                                      Text("Bonus: ${usersSnapshot.data![index][5]}"),
+                                      Text("Bonus: ${userAnswer[index][5]}"),
                                       const Divider(),
                                       IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app))
                                     ],
@@ -125,7 +113,7 @@ class _UserInfoState extends State<UserInfo> {
                                 Container(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    usersSnapshot.data![index][1],
+                                    userAnswer[index][1],
                                     maxLines: 1,
                                     style: const TextStyle(
                                       fontSize: 23,
@@ -135,7 +123,7 @@ class _UserInfoState extends State<UserInfo> {
                                 Container(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    usersSnapshot.data![index][2],
+                                    userAnswer[index][2],
                                     maxLines: 2,
                                     style: const TextStyle(
                                       fontSize: 13,
