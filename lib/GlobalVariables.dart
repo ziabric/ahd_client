@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 String g_login = '';
+bool authAccept = false;
 
 BoxShadow boxShadow = const BoxShadow(
                                 // color: Colors.black,

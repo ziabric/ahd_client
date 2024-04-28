@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo_dart;
 import 'package:flutter/material.dart';
 import 'GlobalVariables.dart';
@@ -16,7 +18,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   
   var db = mongo_dart.Db('mongodb://127.0.0.1:27017/test');
-  bool authAccept = false;
 
   final TextEditingController _loginText = TextEditingController();
   final TextEditingController _passwordText = TextEditingController(); 
@@ -30,11 +31,8 @@ class _LoginPageState extends State<LoginPage> {
     pass.clear();
 
     await db.open();
-    // await db.drop();
 
     print("open");
-
-    // db.collection("first_collection").insert({"name": "user3", "pass":"user"});
 
     var answer = await db.collection("first_collection").find().toList();
 
@@ -48,37 +46,18 @@ class _LoginPageState extends State<LoginPage> {
       pass.add(row["pass"].toString());
     }
 
-    // await answer.forEach((element) {
-    //   print("${element["name"]} -- ${element["pass"]}");
-    //   login.add(element["name"]);
-    //   pass.add(element["pass"]);
-    //   // if ( _loginText.text == element["name"] && _passwordText.text == element["pass"]) {
-    //   //   authAccept = true;
-    //   //   print("find");
-    //   // }
-    // });
-
     await db.close();
     print("close");
 
-    // if (authAccept) {
-    //   authAccept = false;
-    //   login = _loginText.text;
-    //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MainWindow(),));
-    // } else {
-    //   await showDialog(context: context, builder: (context) {
-    //     return AlertDialog(
-    //       title: Text("Auth error"),
-    //       icon: Icon(Icons.cancel)
-    //     );
-    //   });
-    // }
 
   }
 
 
   @override
   Widget build(BuildContext context) {
+
+    authAccept = false;
+
     return Scaffold(
       body: FutureBuilder(
         future: _auth(), 
@@ -101,11 +80,35 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 30,),
                   IconButton.filled(
                     onPressed: () {
+
+                      authAccept = false;
+
                       for (int i = 0; i < login.length; i += 1) {
                         if ( login[i] == _loginText.text && pass[i] == _passwordText.text ) {
                           g_login = login[i];
+                          authAccept = true;
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const MainWindow()));
                         }
+                      }
+                      if (!authAccept) {
+                        showDialog(context: context, builder: (context) => Dialog(
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                "Ошибка авторизации",
+                                style: TextStyle(
+                                  fontSize: 30
+                                ),
+                              ),
+                              const Divider(),
+                              IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app)),
+                            ],
+                          ),
+                          )
+                        ));
                       }
                     }, 
                     icon: const Icon(Icons.login)
