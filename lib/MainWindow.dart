@@ -37,7 +37,7 @@ class _MainWindowState extends State<MainWindow> with TickerProviderStateMixin {
               UserInfo(),
               // ItemInfo(),
               Price(),
-              Text("data"),
+              PersReq(),
               About()
             ]
           ),

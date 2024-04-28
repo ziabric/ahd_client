@@ -40,11 +40,17 @@ class _UserInfoState extends State<UserInfo> {
     return output;
   }
 
+  Future<void> _deleteUser(String id) async {
+    final handler = await Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: g_login, password: 'user',));
+    await handler.execute("DELETE FROM customer WHERE client_id_=$id;");
+    await handler.close();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<dynamic>(
-        future: Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: 'postgres', password: 'user',)), 
+        future: Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: g_login, password: 'user',)), 
         builder: (context, handler) {
           if (handler.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -84,19 +90,30 @@ class _UserInfoState extends State<UserInfo> {
                                     child:  Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text("Name: ${userAnswer[index][1]}"),
+                                      Text("ФИО: ${userAnswer[index][1]}"),
                                       const Divider(),
-                                      Text("Age: ${userAnswer[index][2]}"),
+                                      Text("Возраст: ${userAnswer[index][2]}"),
                                       const Divider(),
                                       Text("id: ${userAnswer[index][0]}"),
                                       const Divider(),
-                                      Text("Birthday: ${userAnswer[index][3]}"),
+                                      Text("ДР: ${userAnswer[index][3]}"),
                                       const Divider(),
-                                      Text("CN: ${userAnswer[index][4]}"),
+                                      Text("Номер бонусной карты: ${userAnswer[index][4]}"),
                                       const Divider(),
-                                      Text("Bonus: ${userAnswer[index][5]}"),
+                                      Text("Кол-во бонусов: ${userAnswer[index][5]}"),
                                       const Divider(),
-                                      IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app))
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app)),
+                                          IconButton(onPressed: () {
+                                            _deleteUser(userAnswer[index][0]).then((value) => setState(() {
+                                            
+                                            }));
+                                            Navigator.pop(context);
+                                          }, icon: const Icon(Icons.delete))
+                                        ],
+                                      )
                                     ],
                                   )), 
                                 ));

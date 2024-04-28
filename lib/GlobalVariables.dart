@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 String g_login = '';
 
-BoxShadow boxShadow = BoxShadow(
+BoxShadow boxShadow = const BoxShadow(
                                 // color: Colors.black,
                                 offset: Offset(
                                   2.0,

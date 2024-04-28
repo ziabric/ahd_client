@@ -90,11 +90,11 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TextField(
-                    decoration: const InputDecoration(labelText: 'Login'),
+                    decoration: const InputDecoration(labelText: 'Логин'),
                     controller: _loginText,
                   ),
                   TextField(
-                    decoration: const InputDecoration(labelText: 'Password'),
+                    decoration: const InputDecoration(labelText: 'Пароль'),
                     obscureText: true,
                     controller: _passwordText,
                   ),
