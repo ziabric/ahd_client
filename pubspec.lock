@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.3"
+  calendar_date_picker2:
+    dependency: "direct main"
+    description:
+      name: calendar_date_picker2
+      sha256: efa732f9643b8aa771e0b4f67a2bdfdc6ed2c8ba5f0bba8e433b077f81c761b7
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.6"
   characters:
     dependency: transitive
     description:
@@ -450,3 +458,4 @@ packages:
     version: "0.5.1"
 sdks:
   dart: ">=3.3.3 <4.0.0"
+  flutter: ">=1.17.0"

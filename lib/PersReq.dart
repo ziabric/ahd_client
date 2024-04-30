@@ -30,7 +30,7 @@ class _PersReqState extends State<PersReq> {
         else {
           newRow.add(item.toString());
         }
-        print(item.toString().length);
+        // print(item.toString().length);
       }
       output.add(newRow);
     }
@@ -49,7 +49,7 @@ class _PersReqState extends State<PersReq> {
           if (handler.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (handler.hasError) {
-            print(handler.error);
+            // print(handler.error);
             return Center(child: Text('Ошибка: ${handler.error}'));
           } else {
             return FutureBuilder(

@@ -6,6 +6,8 @@ bool authAccept = false;
 // List<String> commonUser = ['user', 'user1'];
 List<String> managerUser = ['postgres'];
 
+bool commonUser = false;
+
 BoxShadow boxShadow = const BoxShadow(
                                 // color: Colors.black,
                                 offset: Offset(

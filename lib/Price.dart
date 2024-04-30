@@ -12,7 +12,6 @@ class _PriceState extends State<Price> {
 
   TextEditingController _discont = TextEditingController();
   TextEditingController _star = TextEditingController();
-  String _prevPrice = '';
 
   Future<List<List<String>>> _getUsers (Connection handler) async {
     List<List<String>> output = [];
@@ -35,7 +34,7 @@ class _PriceState extends State<Price> {
         else {
           newRow.add(item.toString());
         }
-        print(item.toString().length);
+        // print(item.toString().length);
       }
       output.add(newRow);
     }
@@ -63,7 +62,7 @@ class _PriceState extends State<Price> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<dynamic>(
-        future: Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: g_login, password: 'user',)), 
+        future: Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: 'postgres', password: 'user',)), 
         builder: (context, handler) {
           if (handler.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -190,18 +189,18 @@ class _PriceState extends State<Price> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app)),
-                                              IconButton(
+                                              (commonUser) ? IconButton(
                                                 onPressed: () {
                                                   _deleteItem(userAnswer[index][0]);
                                                 }, 
                                                 icon: const Icon(Icons.delete)
-                                              ),
-                                              IconButton(
+                                              ) : const Text(""),
+                                              (commonUser) ? IconButton(
                                                 onPressed: () {
                                                   _editItem(userAnswer[index][0], _discont.text, _star.text).then((value) => setState(() {}));
                                                 }, 
                                                 icon: const Icon(Icons.save)
-                                              ),
+                                              ) : const Text(""),
                                             ],
                                           ),
                                         )

@@ -54,8 +54,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
 
-    authAccept = false;
-
     return Scaffold(
       body: FutureBuilder(
         future: _auth(), 
@@ -80,11 +78,13 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
 
                       authAccept = false;
+                      commonUser = false;
 
                       for (int i = 0; i < login.length; i += 1) {
                         if ( login[i] == _loginText.text && pass[i] == _passwordText.text ) {
                           g_login = login[i];
                           authAccept = true;
+                          if (g_login != 'postgres') commonUser = true;
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const MainWindow()));
                         }
                       }

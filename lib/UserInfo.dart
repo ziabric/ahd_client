@@ -15,6 +15,7 @@ class _UserInfoState extends State<UserInfo> {
   Future<List<List<String>>> _getUsers (Connection handler) async {
     List<List<String>> output = [];
     final result = await handler.execute("SELECT client_id_,name_,bonus_card_number_,bonus_count_,age_,count(item_id_) AS total_counts,sell_dt_ FROM customer c INNER JOIN checks ch USING(client_id_) INNER JOIN material mat USING(item_id_) GROUP BY client_id_, name_, bonus_card_number_, age_, sell_dt_, check_id_;");
+    // final result = await handler.execute("Select * from customers");
 
     for (var row in result) {
       List<String> newRow = [];
@@ -33,7 +34,7 @@ class _UserInfoState extends State<UserInfo> {
         else {
           newRow.add(item.toString());
         }
-        print("$count:  ${item.toString()}");
+        // print("$count:  ${item.toString()}");
         count += 1;
       }
       output.add(newRow);
@@ -60,12 +61,12 @@ class _UserInfoState extends State<UserInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<dynamic>(
-        future: Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: g_login, password: 'user',)), 
+        future: Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: 'postgres', password: 'user',)), 
         builder: (context, handler) {
           if (handler.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (handler.hasError) {
-            print(handler.error);
+            // print(handler.error);
             return Center(child: Text('Ошибка: ${handler.error}'));
           } else {
             return FutureBuilder(
@@ -124,18 +125,18 @@ class _UserInfoState extends State<UserInfo> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app)),
-                                          IconButton(onPressed: () {
+                                          (commonUser) ? IconButton(onPressed: () {
                                             _deleteUser(userAnswer[index][0]).then((value) => setState(() {
                                             
                                             }));
                                             Navigator.pop(context);
-                                          }, icon: const Icon(Icons.delete)),
-                                          IconButton(
+                                          }, icon: const Icon(Icons.delete)) : const  Text(""),
+                                          (commonUser) ? IconButton(
                                             onPressed: () {
                                               _editItem(userAnswer[index][0], _bonusCount.text).then((value) => setState(() {}));
                                             }, 
                                             icon: const Icon(Icons.save)
-                                          ),
+                                          ) : const  Text(""),
                                         ],
                                       )
                                     ],
