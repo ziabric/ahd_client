@@ -10,12 +10,14 @@ class Price extends StatefulWidget {
 
 class _PriceState extends State<Price> {
 
-  TextEditingController _priceController = TextEditingController();
+  TextEditingController _discont = TextEditingController();
+  TextEditingController _star = TextEditingController();
   String _prevPrice = '';
 
   Future<List<List<String>>> _getUsers (Connection handler) async {
     List<List<String>> output = [];
-    final result = await handler.execute("select * from material join prices on prices.item_id_=material.item_id_;");
+    // final result = await handler.execute("select * from material join prices on prices.item_id_=material.item_id_;");
+    final result = await handler.execute("SELECT * FROM material mat LEFT JOIN mat_prop prop USING(item_id_) LEFT JOIN prop_descriptr USING(prop_code_) LEFT JOIN stars st USING(item_id_) LEFT JOIN discounts USING(item_id_) WHERE current_date BETWEEN date_from_ AND date_to_;");
 
     for (var row in result) {
       List<String> newRow = [];
@@ -44,14 +46,16 @@ class _PriceState extends State<Price> {
   }
   
   Future<void> _deleteItem(String id) async {
-    final handler = await Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: g_login, password: 'user',));
+    final handler = await Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: 'postgres', password: 'user',));
     await handler.execute("DELETE FROM material WHERE client_id_=$id;");
     await handler.close();
   }
 
-  Future<void> _editItem(String id, String newPrice) async {
-    final handler = await Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: g_login, password: 'user',));
-    await handler.execute("UPDATE prices SET price_=$newPrice WHERE item_id_=$id;");
+  Future<void> _editItem(String id, String newDiscont, String newStar) async {
+    final handler = await Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: 'postgres', password: 'user',));
+    print("CHECK");
+    await handler.execute("UPDATE discounts SET discont_=$newDiscont WHERE item_id_=$id;");
+    await handler.execute("UPDATE stars SET star_=$newStar WHERE item_id_=$id;");
     await handler.close();
   }
 
@@ -86,15 +90,22 @@ class _PriceState extends State<Price> {
                       itemBuilder: (context, index) {
 
                         List<String> titles = ["ID", 
+                                              "Код характеристик",
                                               "Название товара", 
                                               "Номер категории", 
                                               "Дата создания", 
                                               "Название категории",
-                                              "",
-                                              "",
-                                              "Цена",
-                                              "",
+                                              "Значение характеристики",
+                                              "Дата последнего обновления",
+                                              "Название характеристики",
+                                              "Дата последнего обновления",
                                               ""
+                                              "Кол-во звезд",
+                                              "Скидка",
+                                              "Описание скидки",
+                                              "Создатель скидки",
+                                              "Дата начала скидки",
+                                              "Дата окончания скидки"
                                             ];
                         List<Widget> widgets = [];
 
@@ -104,28 +115,6 @@ class _PriceState extends State<Price> {
                           widgets.add(const Divider());
                         }
                         print(userAnswer.length);
-                        // widgets.add(
-                        //   Container(
-                        //     alignment: Alignment.center,
-                        //     child: Row(
-                        //       mainAxisAlignment: MainAxisAlignment.center,
-                        //       children: [
-                        //         IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.exit_to_app)),
-                        //         IconButton(
-                        //           onPressed: () {
-                        //             _deleteItem(userAnswer[index][0]);
-                        //           }, 
-                        //           icon: const Icon(Icons.delete)
-                        //         ),
-                        //         IconButton(
-                        //           onPressed: () {
-                        //           }, 
-                        //           icon: const Icon(Icons.save)
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   )
-                        // );
 
                         return Container(
                           decoration: BoxDecoration(
@@ -138,8 +127,8 @@ class _PriceState extends State<Price> {
                             children: [
                             IconButton(
                               onPressed: () {
-                                _priceController = TextEditingController.fromValue(TextEditingValue(text: userAnswer[index][7]));
-                                _prevPrice = userAnswer[index][7];
+                                _discont = TextEditingController.fromValue(TextEditingValue(text: userAnswer[index][12]));
+                                _star = TextEditingController.fromValue(TextEditingValue(text: userAnswer[index][11]));
                                 showDialog(context: context, builder: (context) => Dialog(
                                   child: Container(
                                     padding: const EdgeInsets.all(10), 
@@ -156,12 +145,45 @@ class _PriceState extends State<Price> {
                                         const Divider(),
                                         Text("${titles[4]}: ${userAnswer[index][4]}"),
                                         const Divider(),
+                                        Text("${titles[5]}: ${userAnswer[index][5]}"),
+                                        const Divider(),
+                                        // Text("${titles[6]}: ${userAnswer[index][6]}"),
+                                        // const Divider(),
+                                        // Text("${titles[7]}: ${userAnswer[index][7]}"),
+                                        // const Divider(),
+                                        // Text("${titles[8]}: ${userAnswer[index][8]}"),
+                                        // const Divider(),
+                                        Text("${userAnswer[index][8]}: ${userAnswer[index][6]}"),
+                                        const Divider(),
                                         TextField(
-                                          decoration: const InputDecoration(labelText: 'Цена'),
+                                          decoration: InputDecoration(labelText: titles[10]),
                                           obscureText: false,
-                                          controller: _priceController,
+                                          controller: _star,
+                                        ),
+                                        TextField(
+                                          decoration: InputDecoration(labelText: titles[11]),
+                                          obscureText: false,
+                                          controller: _discont,
                                         ),
                                         const Divider(),
+                                        // Text("${titles[10]}: ${userAnswer[index][11]}"),
+                                        // const Divider(),
+                                        // Text("${titles[11]}: ${userAnswer[index][12]}"),
+                                        // const Divider(),
+                                        Text("${titles[12]}: ${userAnswer[index][13]}"),
+                                        const Divider(),
+                                        Text("${titles[13]}: ${userAnswer[index][14]}"),
+                                        const Divider(),
+                                        Text("${titles[14]}: ${userAnswer[index][15]}"),
+                                        const Divider(),
+                                        Text("${titles[15]}: ${userAnswer[index][16]}"),
+                                        const Divider(),
+                                        // TextField(
+                                        //   decoration: const InputDecoration(labelText: 'Цена'),
+                                        //   obscureText: false,
+                                        //   controller: _priceController,
+                                        // ),
+                                        // const Divider(),
                                         Container(
                                           alignment: Alignment.center,
                                           child: Row(
@@ -176,7 +198,7 @@ class _PriceState extends State<Price> {
                                               ),
                                               IconButton(
                                                 onPressed: () {
-                                                  if (_priceController.text != _prevPrice) _editItem(userAnswer[index][0], _priceController.text).then((value) => setState(() {}));
+                                                  _editItem(userAnswer[index][0], _discont.text, _star.text).then((value) => setState(() {}));
                                                 }, 
                                                 icon: const Icon(Icons.save)
                                               ),
@@ -200,7 +222,7 @@ class _PriceState extends State<Price> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    userAnswer[index][1],
+                                    userAnswer[index][2],
                                     textAlign: TextAlign.left,
                                     maxLines: 1,
                                     style: const TextStyle(
@@ -208,7 +230,7 @@ class _PriceState extends State<Price> {
                                     ),
                                   ),
                                   Text(
-                                    userAnswer[index][7],
+                                    userAnswer[index][5],
                                     maxLines: 2,
                                     textAlign: TextAlign.left,
                                     style: const TextStyle(

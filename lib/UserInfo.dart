@@ -10,12 +10,15 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfoState extends State<UserInfo> {
 
+  TextEditingController _bonusCount = TextEditingController();
+
   Future<List<List<String>>> _getUsers (Connection handler) async {
     List<List<String>> output = [];
-    final result = await handler.execute("SELECT * FROM customer");
+    final result = await handler.execute("SELECT client_id_,name_,bonus_card_number_,bonus_count_,age_,count(item_id_) AS total_counts,sell_dt_ FROM customer c INNER JOIN checks ch USING(client_id_) INNER JOIN material mat USING(item_id_) GROUP BY client_id_, name_, bonus_card_number_, age_, sell_dt_, check_id_;");
 
     for (var row in result) {
       List<String> newRow = [];
+      int count = 0;
       for (var item in row) {
         if ( item.toString().length == 200 ) {
           String newString = item.toString();
@@ -30,7 +33,8 @@ class _UserInfoState extends State<UserInfo> {
         else {
           newRow.add(item.toString());
         }
-        print(item.toString().length);
+        print("$count:  ${item.toString()}");
+        count += 1;
       }
       output.add(newRow);
     }
@@ -41,8 +45,14 @@ class _UserInfoState extends State<UserInfo> {
   }
 
   Future<void> _deleteUser(String id) async {
-    final handler = await Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: g_login, password: 'user',));
+    final handler = await Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: 'postgres', password: 'user',));
     await handler.execute("DELETE FROM customer WHERE client_id_=$id;");
+    await handler.close();
+  }
+
+  Future<void> _editItem(String id, String newBonus) async {
+    final handler = await Connection.open(Endpoint(host: 'localhost', port: 5432, database: 'postgres', username: 'postgres', password: 'user',));
+    await handler.execute("update customer set bonus_count_=$newBonus where client_id_=$id;");
     await handler.close();
   }
 
@@ -84,6 +94,9 @@ class _UserInfoState extends State<UserInfo> {
                           child: Row(children: [
                             IconButton(
                               onPressed: () {
+
+                                _bonusCount = TextEditingController.fromValue(TextEditingValue(text: userAnswer[index][3]));
+
                                 showDialog(context: context, builder: (context) => Dialog(
                                   child: Container(
                                     padding: const EdgeInsets.all(10), 
@@ -92,15 +105,20 @@ class _UserInfoState extends State<UserInfo> {
                                     children: [
                                       Text("ФИО: ${userAnswer[index][1]}"),
                                       const Divider(),
-                                      Text("Возраст: ${userAnswer[index][2]}"),
+                                      Text("Номер бонусной карты: ${userAnswer[index][2]}"),
                                       const Divider(),
                                       Text("id: ${userAnswer[index][0]}"),
                                       const Divider(),
-                                      Text("ДР: ${userAnswer[index][3]}"),
+                                      Text("Возраст: ${userAnswer[index][4]}"),
                                       const Divider(),
-                                      Text("Номер бонусной карты: ${userAnswer[index][4]}"),
-                                      const Divider(),
-                                      Text("Кол-во бонусов: ${userAnswer[index][5]}"),
+                                      TextField(
+                                        decoration: const InputDecoration(labelText: 'Кол-во бонусов'),
+                                        obscureText: false,
+                                        controller: _bonusCount,
+                                      ),
+                                      // Text("Кол-во бонусов: ${userAnswer[index][4]}"),
+                                      // const Divider(),
+                                      Text("Последняя дата покупки: ${userAnswer[index][6]}"),
                                       const Divider(),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -111,7 +129,13 @@ class _UserInfoState extends State<UserInfo> {
                                             
                                             }));
                                             Navigator.pop(context);
-                                          }, icon: const Icon(Icons.delete))
+                                          }, icon: const Icon(Icons.delete)),
+                                          IconButton(
+                                            onPressed: () {
+                                              _editItem(userAnswer[index][0], _bonusCount.text).then((value) => setState(() {}));
+                                            }, 
+                                            icon: const Icon(Icons.save)
+                                          ),
                                         ],
                                       )
                                     ],

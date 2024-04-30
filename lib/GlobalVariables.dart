@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 String g_login = '';
 bool authAccept = false;
 
+// List<String> commonUser = ['user', 'user1'];
+List<String> managerUser = ['postgres'];
+
 BoxShadow boxShadow = const BoxShadow(
                                 // color: Colors.black,
                                 offset: Offset(
